@@ -13,17 +13,10 @@ typedef struct Element {
 	char nazwisko[20]; // max dlugosc 20 wraz z \0
 } element;
 
-
-element odczytaj() {
-
-}
-
 int main(void)
 {
 	FILE* plik;
 	FILE* plik_klienta;
-	//int* id = malloc(sizeof(int));
-	//char nazwisko[7];
 
 	int x = 0;
 	int rozmiar = 0;
@@ -100,28 +93,3 @@ int main(void)
 
 
 
-/*	int i;
-	element tablica[20];
-	char* nazwiska[] = {
-	"Kowalski",
-	"Korzeniowski",
-	"Małysz",
-	"Bogutyn",
-	"Austen",
-	"Defo",
-	"Nowak",
-	"Majda",
-	"Skrzypczak",
-	"Theis",
-	"Michalski",
-	"Markowski",
-	"Konieczny",
-	"Farbotko",
-	"Nowicki",
-	"Kuszlewicz",
-	"Cichocki",
-	"Bartyzel",
-	"Kwoczek",
-	"Biernat"
-	};
-	*/
