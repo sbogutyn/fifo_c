@@ -8,15 +8,11 @@
 #include <linux/stat.h>
 
 #define PLIK_FIFO	"serverfifo"
-typedef struct Element {
-	int ID;
-	char nazwisko[20]; // max dlugosc 20 wraz z \0
-} element;
 
 int main(void)
 {
-	FILE* plik;
-	FILE* plik_klienta;
+	int plik;
+	int plik_klienta;
 
 	int x = 0;
 	int rozmiar = 0;
@@ -27,7 +23,6 @@ int main(void)
 	mknod(PLIK_FIFO , S_IFIFO|0666, 0);
 	
 	int i;	
-	element tablica[20];
 	char* nazwiska[] = {
 	"Kowalski",
 	"Korzeniowski",
@@ -50,36 +45,39 @@ int main(void)
 	"Kwoczek",
 	"Biernat"
 	};
-
-	for (i=0; i<20;i++) {
-		tablica[i].ID = i;
-		strcpy(tablica[i].nazwisko, nazwiska[i]);
-	}
-	/*for (i=0; i<20;i++) {*/
-		/*printf("%d. %s\n", tablica[i].ID, tablica[i].nazwisko);*/
-	/*}*/
-
 	while(1)
 	{
-		plik = fopen(PLIK_FIFO, "r");
-		if (fread(&rozmiar, sizeof(int), 1, plik) == 1) {
-			fread(&x, sizeof(int), 1, plik);
+		plik = open(PLIK_FIFO, O_RDONLY);
+		if (read(plik, &rozmiar, sizeof(int))) {
+			read(plik, &x, sizeof(int));
 			int dlugosc_napisu = (rozmiar - sizeof(int))/sizeof(char); 
 			sciezka = malloc(sizeof(char) * dlugosc_napisu);
-			fread(sciezka, sizeof(char), dlugosc_napisu, plik);
-			fclose(plik);
-			printf("Otrzymany łańcuch: %d %d %s\n", dlugosc_napisu, x, sciezka);
+			read(plik, sciezka, sizeof(char) * dlugosc_napisu);
+			close(plik);
+			printf("Otrzymane dane: %d %d %s\n", dlugosc_napisu, x, sciezka);
 
 			umask(0);
 			mknod(sciezka , S_IFIFO|0666, 0);
-			plik_klienta = fopen(sciezka, "w");
+	
+			typedef struct {
+				int dlugosc;
+				char wiadomosc[0];
+			} komunikat;
+
+			plik_klienta = open(sciezka, O_WRONLY);
 			if ((x > 19) || (x < 0)) {
-				char* komunikat = "Nie ma";
-				fwrite(komunikat, sizeof(char), strlen(komunikat), plik_klienta);
+				char* tekst = "Nie ma";
+				komunikat* k = malloc(sizeof(komunikat) + strlen(tekst));
+				k->dlugosc = strlen(tekst);
+				strcpy(k->wiadomosc, tekst);
+				write(plik_klienta, k, sizeof(komunikat) + strlen(tekst));
 			} else {
-				fwrite(nazwiska[x], sizeof(char), strlen(nazwiska[x]), plik_klienta);
+				komunikat* k = malloc(sizeof(komunikat) + strlen(nazwiska[x]));
+				k->dlugosc = strlen(nazwiska[x]);
+				strcpy(k->wiadomosc, nazwiska[x]);
+				write(plik_klienta, k, sizeof(komunikat) + strlen(nazwiska[x]));
 			}
-			fclose(plik_klienta);
+			close(plik_klienta);
 			free(sciezka);
 		}
 
@@ -87,6 +85,7 @@ int main(void)
 	}
 	return(0);
 }
+
 
 
 
