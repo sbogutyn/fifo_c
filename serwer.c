@@ -24,26 +24,7 @@ int main(void)
 	
 	int i;	
 	char* nazwiska[] = {
-	"Kowalski",
-	"Korzeniowski",
-	"Małysz",
-	"Bogutyn",
-	"Austen",
-	"Defo",
-	"Nowak",
-	"Majda",
-	"Skrzypczak",
-	"Theis",
-	"Michalski",
-	"Markowski",
-	"Konieczny",
-	"Farbotko",
-	"Nowicki",
-	"Kuszlewicz",
-	"Cichocki",
-	"Bartyzel",
-	"Kwoczek",
-	"Biernat"
+	"Kowalski"
 	};
 	while(1)
 	{
